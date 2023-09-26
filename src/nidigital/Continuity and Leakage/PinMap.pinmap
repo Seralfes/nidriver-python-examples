@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PinMap xmlns="http://www.ni.com/TestStand/SemiconductorModule/PinMap.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.5">
+	<Instruments>
+		<NIDigitalPatternInstrument name="PXIe6570" numberOfChannels="32" group="Digital" />
+	</Instruments>
+	<Pins>
+		<DUTPin name="Vcc" />
+		<DUTPin name="Vdd" />
+		<DUTPin name="PA_EN" />
+		<DUTPin name="LNA_EN" />
+	</Pins>
+	<PinGroups>
+		<PinGroup name="Power">
+			<PinReference pin="Vcc" />
+			<PinReference pin="Vdd" />
+		</PinGroup>
+		<PinGroup name="DUTPins">
+			<PinReference pin="PA_EN" />
+			<PinReference pin="LNA_EN" />
+		</PinGroup>
+		<PinGroup name="All_Pins">
+			<PinReference pin="Vcc" />
+			<PinReference pin="Vdd" />
+			<PinReference pin="PA_EN" />
+			<PinReference pin="LNA_EN" />
+		</PinGroup>
+	</PinGroups>
+	<Sites>
+		<Site siteNumber="0" />
+	</Sites>
+	<Connections>
+		<Connection pin="LNA_EN" siteNumber="0" instrument="PXIe6570" channel="3" />
+		<Connection pin="PA_EN" siteNumber="0" instrument="PXIe6570" channel="2" />
+		<Connection pin="Vcc" siteNumber="0" instrument="PXIe6570" channel="0" />
+		<Connection pin="Vdd" siteNumber="0" instrument="PXIe6570" channel="1" />
+	</Connections>
+</PinMap>
