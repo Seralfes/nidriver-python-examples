@@ -1,5 +1,5 @@
 # nidriver-python-examples
-This repository hosts several examples for NI's Modular Instruments [`nimi-python`](https://github.com/ni/nimi-python) and the System Configuration [`syscfg`](https://github.com/tkrebes/nisyscfg-python) Python APIs. Some of these examples are direct translations of LabVIEW shipping examples. The purpose of this project is to expand upon the currently available [`nimi-python`](https://github.com/ni/nimi-python) and [`nisyscfg`](https://github.com/tkrebes/nisyscfg-python) examples residing on their own GitHub repo.
+This repository hosts several examples for NI's Modular Instruments [`nimi-python`](https://github.com/ni/nimi-python) and the System Configuration [`nisyscfg`](https://github.com/tkrebes/nisyscfg-python) Python APIs. Some of these examples are direct translations of LabVIEW shipping examples. The purpose of this project is to expand upon the currently available [`nimi-python`](https://github.com/ni/nimi-python) and [`nisyscfg`](https://github.com/tkrebes/nisyscfg-python) examples residing on their own GitHub repo.
 
 # Getting Started
 Before running any of the examples, make sure to install its corresponding instrument driver. Driver-specific instructions can be found below:
