@@ -1,5 +1,5 @@
 ###### This example demonstrates how to take a waveform voltage measurement on two DMMs #######
-###### The DMMs are synced via PXI_TRIG0 send out by an SMU, since the DMMs are uncapable of sourcing a trigger ######
+###### The DMMs are synced via PXI_TRIG0 sent out by an SMU, since the DMMs are incapable of sourcing a trigger ######
 
 import nidmm
 import nidcpower
