@@ -1,5 +1,10 @@
-from datetime import timedelta
+"""NI System Configuration - Get Elapsed System Time.
+
+This example demonstrates how to get a system's start time since it was last restarted.
+"""
+
 import nisyscfg
+
 
 with nisyscfg.Session(target="localhost") as session:
     system_start_time = session.resource.system_start_time

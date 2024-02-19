@@ -1,4 +1,9 @@
+"""Switch - Scanning - Software Scanning (NI-SWITCH).
+
+This example demonstrates how to scan a series of channels on a switch using software scanning.
+"""
 import niswitch
+
 
 with niswitch.Session(resource_name="PXI2564", topology="2564/16-SPST", simulate=False, reset_device=False) as session:
     session.scan_list = "ch0->com0;"

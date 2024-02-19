@@ -1,5 +1,10 @@
-import niswitch
+"""Switch - Scanning with a DMM - Handshaking (NI-SWITCH).
+
+This example demonstrates how to scan a series of channels on a switch module and take measurements with an NI digital multimeter using handshaking.
+"""
 import nidmm
+import niswitch
+
 
 samples_to_fetch = 5
 
