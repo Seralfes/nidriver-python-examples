@@ -1,8 +1,13 @@
+"""NI-SCOPE - Read and Graph Waveform.
+
+This example demonstrates how to read waveforms from an NI-SCOPE channel, and plot it using the matplotlib library
+"""
 # Module imports
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 import niscope
+
 
 # Plot default configurations
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
@@ -19,10 +24,11 @@ with niscope.Session(resource_name='PXIe5160', options={}) as session:
     session.configure_vertical(range=5.0, coupling=niscope.VerticalCoupling.AC)
     session.configure_horizontal_timing(min_sample_rate=50000000, min_num_pts=num_samples, ref_position=50.0, num_records=1, enforce_realtime=True)
 
-    # Read and store waveform. Read() returns a list of waveforms, with each channel being an element of the list
+    # Read and store waveform.
+    # The read() method returns a list of waveforms, with each channel being an element of the list
     # The elements within each channel are WaveformInfo class instances, with attributes that can be accessed
     waveforms = session.channels["1"].read(num_samples=num_samples)
-    
+
     # The 'samples' attribute returns a memory address. To get the samples list, iterate over waveforms[0].samples and append them to a new list
     for sample in waveforms[0].samples:     # waveforms[0] corresponds to the first, and only in this example, waveform in the list
         samples.append(sample)

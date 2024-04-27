@@ -1,52 +1,65 @@
-"""
-This example has been tested successfully with a PXIe-4139. Active work is being done to test with other SMU models.
+"""NI-DCPower Single Point - Transient Response Plot.
+
+This example demonstrates how to plot the transient response
+of an SMU while using Single Point Source Mode.
+
+This example has been tested successfully with a PXIe-4139.
+Active work is being done to test with other SMU models.
 """
 
 # Module imports.
-
 import time
-import nidcpower
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-# Variables.
+import nidcpower
 
+
+# Variables.
 voltage_level = 1
 voltage_level_range = 6
 aperture_time = 0
 source_delay = 0
-measure_record = 250   # Sets the amount of points to be captured in the measurement.
-transient_response = nidcpower.TransientResponse.NORMAL # Modify the Enum value in blue to either SLOW/NORMAL/FAST/CUSTOM depending on which response you would like to see.
+
+# Sets the amount of points to be captured in the measurement.
+measure_record = 250
+
+# Modify the Enum value in blue to either SLOW/NORMAL/FAST/CUSTOM depending on which response you would like to see.
+transient_response = nidcpower.TransientResponse.NORMAL
 
 # Constants.
-
 voltage_points = []    # Voltage measurements will be stored here at the end for the voltage graph's Y-axis.
 current_points = []    # Current measurements will be stored here at the end for the current graph's Y-axis.
 x_time = []            # A delta time equal to the aperture time is used to determine the X-axis of the graph.
 
+# Sets up graph properties:
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
 plt.rcParams["figure.autolayout"] = True
 
+# Creates graph subplot to be displayed:
 fig, (ax0, ax1) = plt.subplots(nrows=2, figsize=(7, 9.6))
 
 with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, options={}, independent_channels=True) as session:
-
     # Common SMU settings
-
     session.source_mode = nidcpower.SourceMode.SINGLE_POINT
     session.output_function = nidcpower.OutputFunction.DC_VOLTAGE
     session.voltage_level = voltage_level
     session.voltage_level_range = voltage_level_range
 
     # Below settings allow you to control the time it takes for the SMU to take a measurement.
-
     session.aperture_time_units = nidcpower.ApertureTimeUnits.SECONDS
-    session.aperture_time = aperture_time   # Longer aperture times to improve measurement resolution; shorter aperture times to increase the measurement speed.
-    session.source_delay = source_delay  # Determines when, in seconds, the SMU generates the Source Complete event, potentially starting a measurement if the Measure When property is set to Automatically After Source Complete
+
+    # Longer aperture times to improve measurement resolution; shorter aperture times to increase the measurement speed.
+    session.aperture_time = aperture_time
+
+    # Determines when, in seconds, the SMU generates the Source Complete event,
+    # potentially starting a measurement if the Measure When property is set to Automatically After Source Complete
+    session.source_delay = source_delay
     
     # Below settings configure the transient response of the SMU.
-
-    session.transient_response = transient_response # Setting response to CUSTOM allows to fine tune the Gain BW, Compensation Frequency and Pole Zero Ratio.
+    # Setting response to CUSTOM allows to fine tune the Gain BW, Compensation Frequency and Pole Zero Ratio.
+    session.transient_response = transient_response
     """
     Gain Bandwidth: The frequency at which the unloaded loop gain extrapolates to 0 dB in the absence of additional poles and zeroes. Value range = 10 Hz to 20 MHz
     Compensation Frequency: The frequency at which a pole-zero pair is added to the system when the channel is in Constant Voltage mode. Value range = 20 Hz to 20 MHz
@@ -66,7 +79,6 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
     #session.current_pole_zero_ratio = 4000
 
     # Below dictionary created for ease of showing the values in the output terminal.
-
     transient_settings = {
         "Voltage Gain Bandwidth": session.voltage_gain_bandwidth,
         "Voltage Compensation Frequency": session.voltage_compensation_frequency,
@@ -75,22 +87,32 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
         "Current Compensation Frequency": session.current_compensation_frequency,
         "Current Pole Zero Ratio": session.current_pole_zero_ratio}
 
-    # Set up a Measure Trigger to decouple the measure engine from the source engine, enabling continuous measuring even when transitioning from one source point to the next
+    # Set up a Measure Trigger to decouple the measure engine from the source engine,
+    # enabling continuous measuring even when transitioning from one source point to the next
 
-    session.measure_when = nidcpower.MeasureWhen.ON_MEASURE_TRIGGER  # Starts measuring when the Measure Trigger signal is received.
-    session.exported_start_trigger_output_terminal = "/PXI4139/PXI_Trig0"   # Exports the Start Trigger generated after the session is initiated, to activate the Measure Trigger. Measurement will start after session initiates.
-    session.measure_trigger_type = nidcpower.TriggerType.DIGITAL_EDGE   # Configures the Measure Trigger to wait for a Digital Edge (in this case the exported Start Trigger).
-    session.digital_edge_measure_trigger_input_terminal = "/PXI4139/PXI_Trig0"  # Configures the terminal where the instrument is expecting to receive the Measure Trigger (in this case the exported Start Trigger).
+    # Starts measuring when the Measure Trigger signal is received.
+    session.measure_when = nidcpower.MeasureWhen.ON_MEASURE_TRIGGER
+
+    # Exports the Start Trigger generated after the session is initiated,
+    # to activate the Measure Trigger. Measurement will start after session initiates.
+    session.exported_start_trigger_output_terminal = "/PXI4139/PXI_Trig0"
+
+    # Configures the Measure Trigger to wait for a Digital Edge (in this case the exported Start Trigger).
+    session.measure_trigger_type = nidcpower.TriggerType.DIGITAL_EDGE
+
+    # Configures the terminal where the instrument is expecting to receive the Measure Trigger (in this case the exported Start Trigger).
+    session.digital_edge_measure_trigger_input_terminal = "/PXI4139/PXI_Trig0"
 
     # Other useful SMU settings.
-    
     session.measure_record_length_is_finite = False
-    session.measure_record_length = measure_record   # Sets a record length long enough to capture what you're insterested in. You can play with this value to change the viewed graph.
+
+    # Sets a record length long enough to capture what you're insterested in.
+    # You can play with this value to change the viewed graph.
+    session.measure_record_length = measure_record
     session.measure_buffer_size = 20000000
     session.output_enabled = True
 
     # Initiate generation/acquisition.
-
     session.initiate()
 
     samples_acquired = 0
@@ -115,7 +137,6 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
     print(transient_settings)
 
     # Stores voltage and current measurements in a new list for plotting purposes.
-
     for measure in measurements:
         voltage_points.append(measure[0])
         current_points.append(measure[1])
@@ -125,7 +146,6 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
     # Plot settings.
 
     # ax0 corresponds to the voltage graph.
-    
     ax0.xaxis.set_major_formatter(ticker.EngFormatter(unit="s"))
     ax0.yaxis.set_major_formatter(ticker.EngFormatter(unit="V"))
     ax0.set_xlim(0, session.aperture_time*len(measurements))
@@ -135,7 +155,6 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
     ax0.plot(x_time, voltage_points)
 
     # ax1 corresponds to the current graph.
-
     ax1.xaxis.set_major_formatter(ticker.EngFormatter(unit="s"))
     ax1.yaxis.set_major_formatter(ticker.EngFormatter(unit="A"))
     ax1.set_xlim(0, session.aperture_time*len(measurements))
@@ -144,8 +163,7 @@ with nidcpower.Session(resource_name="PXI1Slot1", channels=None, reset=True, opt
     ax1.grid()
     ax1.plot(x_time, current_points)
 
-    # Formats title of the whole plot in regard to the Transient Response used.
-
+    # Formats title of the whole plot in relation to the Transient Response used.
     fig.suptitle(str(session.transient_response).title().lstrip("TransientResponse.") + " Response")
 
     plt.show()

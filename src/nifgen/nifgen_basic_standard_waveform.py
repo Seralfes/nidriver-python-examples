@@ -1,5 +1,12 @@
+"""NI-FGEN - Basic Standard Waveform.
+
+This example demonstrates how to use Standard Function mode.
+"""
+# Module imports
 import nifgen
 
+
+# dictionary with the different waveforms that can be outputted in Standard Function mode
 waveforms = {"sine": nifgen.Waveform.SINE,
              "square": nifgen.Waveform.SQUARE,
              "triangle": nifgen.Waveform.TRIANGLE,
@@ -9,6 +16,7 @@ waveforms = {"sine": nifgen.Waveform.SINE,
              "noise": nifgen.Waveform.NOISE}
 
 with nifgen.Session(resource_name="PXI1Slot1", options={}) as session:
+    # FGEN configuration
     session.output_mode = nifgen.OutputMode.FUNC
     session.configure_standard_waveform(waveform=waveforms["sine"], amplitude=2.0, frequency=1e6)
     session.output_enabled = True

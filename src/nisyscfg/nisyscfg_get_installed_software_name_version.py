@@ -1,4 +1,4 @@
-"""NI System Cofniguration - Get Installed Software Name and Version.
+"""NI System Configuration - Get Installed Software Name and Version.
 """
 import nisyscfg
 

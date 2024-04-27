@@ -1,9 +1,14 @@
+"""NI-SCOPE - Continuously Update Graph
+
+This example demonstrates how to continuosly read a waveform, plot it, and update the plot with new sets of data.
+"""
 # Module imports
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import matplotlib.animation as animation
 
 import niscope
+
 
 # Plot default configurations
 plt.rcParams["figure.figsize"] = [7.50, 3.50]

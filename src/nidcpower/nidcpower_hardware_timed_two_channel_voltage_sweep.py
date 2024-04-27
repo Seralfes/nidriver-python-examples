@@ -1,15 +1,24 @@
-"""This example demonstrates how to set up a hardware-timed two-channel nested voltage sweep and display the results in a graph (IV Curve).
+"""NI-DCPower Hardware-Timed Two-Channel Voltage Sweep (IV Curve).
 
-Use this example to produce the characteristic curves of a FET transistor.  It can be easily adapted to test a BJT by performing a current sweep
-instead of a voltage sweep.  This example performs a hardware-timed sweep (with triggers and events) using Sequence source mode.
+This example demonstrates how to set up a hardware-timed,
+two-channel nested voltage sweep and display the results in a graph (IV Curve).
 
-When the code is run and the graph displays, you can click on each plot in the right hand corner of the graph to enable/disable its visibility
+Use this example to produce the characteristic curves of a FET transistor.
+It can be easily adapted to test a BJT by performing a current sweep instead of a voltage sweep.
+This example performs a hardware-timed sweep (with triggers and events) using Sequence source mode.
+
+When the code is run and the graph displays,
+you can click on each plot in the right hand corner of the graph to enable/disable its visibility.
 """
+
+# Module imports
+import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+
 import nidcpower
-import numpy as np
+
 
 # Gain voltage start and stop for first SMU:
 voltage_start_0 = 3.5
@@ -19,10 +28,14 @@ voltage_stop_0 = 3.9
 voltage_start_1 = 1
 voltage_stop_1 = 5
 
-plots = 5       # Number of plots to be displayed on the graph, also used for the voltages of the first SMU that control the gate voltage
-plots = np.clip(plots, 1, 2147483647)   # Limits the plots variable to a minimum of 1, in case a value less than 1 is specified
-points = 10     # Number of measurements to be taken by the second SMU
-points = np.clip(points, 1, 2147483647) # Limits the points variable to a minimum of 1, in case a value less than 1 is specified
+# Number of plots to be displayed on the graph, also used for the voltages of the first SMU that control the gate voltage
+plots = 5
+# Limits the plots variable to a minimum of 1, in case a value less than 1 is specified
+plots = np.clip(plots, 1, 2147483647)
+# Number of measurements to be taken by the second SMU
+points = 10
+# Limits the points variable to a minimum of 1, in case a value less than 1 is specified
+points = np.clip(points, 1, 2147483647)
 
 sequence_voltages_0 = []
 sequence_voltages_1 = []
@@ -31,8 +44,10 @@ source_delays = []
 # Generates step voltages for the first (0) and seconds (1) SMU:
 if plots - 1 == 0:
     sequence_voltages_0.append(voltage_start_0)
+
 elif points - 1 == 0:
     sequence_voltages_1.append(voltage_start_1)
+
 else:
     voltages_0 = (voltage_stop_0 - voltage_start_0) / (plots - 1)
     for i in range(plots):
@@ -41,6 +56,7 @@ else:
     voltages_1 = (voltage_stop_1 - voltage_start_1) / (points - 1)
     for i in range(points):
         sequence_voltages_1.append((voltages_1 * i) + voltage_start_1)
+
 
 # Sets up graph properties:
 plt.rcParams["figure.figsize"] = [7.50, 3.50]
@@ -79,11 +95,13 @@ with nidcpower.Session(resource_name="PXI1Slot1", options={}) as session1, nidcp
     session2.source_delay = 0.005
     session2.current_limit = 0.01
 
-    # Resets the previous source_delays array, and creates a new array source delays of the same size as the step voltages to configure the set_sequence method for the second SMU:
+    # Resets the previous source_delays array,
+    # and creates a new array source delays of the same size as the step voltages,
+    # to configure the set_sequence method for the second SMU:
     source_delays = []
     for i in range(len(sequence_voltages_1)):
         source_delays.append(0.005)
-    
+
     session2.set_sequence(values=sequence_voltages_1, source_delays=source_delays)
 
     # Triggering setup of the second SMU:
@@ -119,8 +137,12 @@ with nidcpower.Session(resource_name="PXI1Slot1", options={}) as session1, nidcp
         for point in range(len(measurements_2[0])):
             measured_voltages_2.append(measurements_2[plot][point][0])
             measured_currents_2.append(measurements_2[plot][point][1])
-            print(line_format.format("{:.3f}".format(measurements_1[plot][0]), "{:.3e}".format(measurements_2[plot][point][1]), "{:.3f}".format(measurements_2[plot][point][0])))
-        ax.plot(measured_voltages_2, measured_currents_2, marker='o', label=f"{measurements_1[plot][0]:3f} V")    # Plots a set of points where xaxis = Voltages and yaxis = Currents of the second SMU
+            print(line_format.format("{:.3f}".format(measurements_1[plot][0]),
+                                     "{:.3e}".format(measurements_2[plot][point][1]),
+                                     "{:.3f}".format(measurements_2[plot][point][0])))
+
+        # Plots a set of points where xaxis = Voltages and yaxis = Currents of the second SMU
+        ax.plot(measured_voltages_2, measured_currents_2, marker='o', label=f"{measurements_1[plot][0]:3f} V")
         measured_voltages_2 = []
         measured_currents_2 = []
 
@@ -146,7 +168,7 @@ with nidcpower.Session(resource_name="PXI1Slot1", options={}) as session1, nidcp
         visible = not origline.get_visible()
         origline.set_visible(visible)
         #Change the alpha on the line in the legend so we can see what lines
-        #have been toggled.
+        #that have been toggled.
         legline.set_alpha(1.0 if visible else 0.2)
         fig.canvas.draw()
 
